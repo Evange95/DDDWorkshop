@@ -1,0 +1,61 @@
+{
+  "name": "fleet-manager",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "fleet-manager/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/fleet-manager",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "fleet-manager/src/main.ts",
+        "tsConfig": "fleet-manager/tsconfig.app.json",
+        "assets": ["fleet-manager/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "generateLockfile": true,
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "fleet-manager:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "fleet-manager:build:development"
+        },
+        "production": {
+          "buildTarget": "fleet-manager:build:production"
+        }
+      }
+    },
+    "docker-build": {
+      "dependsOn": ["build"],
+      "command": "docker build -f fleet-manager/Dockerfile . -t fleet-manager"
+    }
+  },
+  "tags": []
+}
