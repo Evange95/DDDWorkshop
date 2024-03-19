@@ -1,10 +1,22 @@
-// CREATE TABLE IF NOT EXISTS seats (SeatTypeID INT PRIMARY KEY, SeatType VARCHAR(255), Width INT, Height INT, Pitch INT, Weight INT, ProductionDate DATE, ComfortLevel INT, Features VARCHAR(255))
+import { Pool } from 'mysql2/typings/mysql/lib/Pool';
 
-export async function createSeatType(seat, connection) {
+export type SeatType = {
+  SeatType: string;
+  Width: number;
+  Height: number;
+  Pitch: number;
+  Weight: number;
+  ProductionDate: string;
+  ComfortLevel: string;
+  Features: string;
+  Version: number;
+};
+
+export async function createSeatType(seat, connection: Pool) {
   return await connection
     .promise()
     .query(
-      `INSERT INTO sseatTypeseats (SeatType, Width, Height, Pitch, Weight, ProductionDate, ComfortLevel, Features) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO seatTypes (SeatType, Width, Height, Pitch, Weight, ProductionDate, ComfortLevel, Features, Version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         seat.SeatType,
         seat.Width,
@@ -14,6 +26,7 @@ export async function createSeatType(seat, connection) {
         seat.ProductionDate,
         seat.ComfortLevel,
         seat.Features,
+        1,
       ]
     );
 }
@@ -28,7 +41,7 @@ export async function updateSeatType(id, seat, connection) {
   return await connection
     .promise()
     .query(
-      `UPDATE seatTypes SET SeatType = ?, Width = ?, Height = ?, Pitch = ?, Weight = ?, ProductionDate = ?, ComfortLevel = ?, Features = ? WHERE SeatTypeID = ?`,
+      `UPDATE seatTypes SET SeatType = ?, Width = ?, Height = ?, Pitch = ?, Weight = ?, ProductionDate = ?, ComfortLevel = ?, Features = ?, Version = ?, WHERE SeatTypeID = ? AND Version = ?`,
       [
         seat.SeatType,
         seat.Width,
@@ -38,7 +51,9 @@ export async function updateSeatType(id, seat, connection) {
         seat.ProductionDate,
         seat.ComfortLevel,
         seat.Features,
+        seat.version + 1,
         id,
+        seat.version,
       ]
     );
 }

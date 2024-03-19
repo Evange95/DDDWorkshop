@@ -10,6 +10,7 @@ export type Aircraft = {
   CruiseSpeed: number;
   EngineType: string;
   NoiseLevel: string;
+  Version: number;
 };
 
 export async function createAircraft(aircraft: Aircraft, connection) {
@@ -27,8 +28,8 @@ export async function createAircraft(aircraft: Aircraft, connection) {
     NoiseLevel,
   } = aircraft;
   return await connection.promise().query(
-    `INSERT INTO aircrafts (Model, Manufacturer, Wingspan, \`CabinWidth\`, \`CabinHeight\`, \`CabinLength\`, \`CargoCapacity\`, \`Range\`, \`CruiseSpeed\`, \`EngineType\`, \`NoiseLevel\`)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO aircrafts (Model, Manufacturer, Wingspan, \`CabinWidth\`, \`CabinHeight\`, \`CabinLength\`, \`CargoCapacity\`, \`Range\`, \`CruiseSpeed\`, \`EngineType\`, \`NoiseLevel\`, \`Version\`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       Model,
       Manufacturer,
@@ -41,6 +42,7 @@ export async function createAircraft(aircraft: Aircraft, connection) {
       CruiseSpeed,
       EngineType,
       NoiseLevel,
+      1,
     ]
   );
 }
@@ -67,11 +69,12 @@ export async function updateAircraft(
     CruiseSpeed,
     EngineType,
     NoiseLevel,
+    Version,
   } = aircraft;
   return await connection.promise().query(
     `UPDATE aircrafts
-            SET Manufacturer = ?, Wingspan = ?, \`CabinWidth\` = ?, \`CabinHeight\` = ?, \`CabinLength\` = ?, \`CargoCapacity\` = ?, \`Range\` = ?, \`CruiseSpeed\` = ?, \`EngineType\` = ?, \`NoiseLevel\` = ?
-            WHERE Model = ?`,
+            SET Manufacturer = ?, Wingspan = ?, \`CabinWidth\` = ?, \`CabinHeight\` = ?, \`CabinLength\` = ?, \`CargoCapacity\` = ?, \`Range\` = ?, \`CruiseSpeed\` = ?, \`EngineType\` = ?, \`NoiseLevel\` = ?, \`Version\` = ?
+            WHERE Model = ? AND \`Version\` = ?`,
     [
       Manufacturer,
       Wingspan,
@@ -83,7 +86,9 @@ export async function updateAircraft(
       CruiseSpeed,
       EngineType,
       NoiseLevel,
+      Version + 1,
       id,
+      Version,
     ]
   );
 }
