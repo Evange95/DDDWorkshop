@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Aircraft {
+  Id            String @id @unique
+  Manufacturer  String
+  Wingspan      Float
+  CabinWidth    Float
+  CabinHeight   Float
+  CabinLength   Float
+  CargoCapacity Float
+  Range         Float
+  CruiseSpeed   Float
+  EngineType    String
+  NoiseLevel    String
+  Version       Int
+}
+
+model SeatType {
+  Id             String @id @unique
+  Width          Float
+  Height         Float
+  Pitch          Float
+  Weight         Float
+  ProductionDate String
+  ComfortLevel   String
+  Features       String
+  Version        Int
+  Row            Row[]
+}
+
+model Row {
+  Id      String        @id @unique
+  Seat    SeatType      @relation(fields: [SeatId], references: [Id])
+  SeatId  String
+  Version Int
+  Cabin   CabinLayout[]
+}
+
+model CabinLayout {
+  Id      String @id @unique
+  Width   Int
+  Length  Int
+  Rows    Row    @relation(fields: [RowsId], references: [Id])
+  RowsId  String
+  Version Int
+}
